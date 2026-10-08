@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Repaso: Gestión de riesgos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#F4F7F5;--card:#FFFFFF;--ink:#16221D;--mut:#5B6B64;--line:#DAE3DE;
+  --brand:#1F9D6B;--good-bg:#D8F3E4;--good:#157A52;--bad-bg:#FFE1DE;--bad:#C93B34;
+  --sel-bg:#E3EEFF;--sel:#2F6FED;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1714;--card:#172420;--ink:#EAF2EE;--mut:#93A59C;--line:#2A3A33;
+    --good-bg:#12362A;--good:#5BE0A5;--bad-bg:#40201E;--bad:#FF8A82;--sel-bg:#17294A;--sel:#7FA8FF;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1714;--card:#172420;--ink:#EAF2EE;--mut:#93A59C;--line:#2A3A33;
+  --good-bg:#12362A;--good:#5BE0A5;--bad-bg:#40201E;--bad:#FF8A82;--sel-bg:#17294A;--sel:#7FA8FF;
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:700;line-height:1.4;-webkit-tap-highlight-color:transparent}
+#app{height:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column}
+button{font:inherit;color:inherit}
+
+/* botones */
+.btn{border:0;border-radius:14px;padding:14px 22px;font-weight:900;font-size:1rem;letter-spacing:.02em;cursor:pointer;background:var(--brand);color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--brand) 62%,#000);transition:transform .08s,box-shadow .08s}
+.btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--brand) 62%,#000)}
+.btn:disabled{background:var(--line);color:var(--mut);box-shadow:none;cursor:not-allowed}
+.btn.wide{width:100%}
+.btn.bad{background:var(--bad);box-shadow:0 4px 0 color-mix(in srgb,var(--bad) 62%,#000)}
+.btn.ghost{background:transparent;color:var(--mut);box-shadow:none;border:2px solid var(--line)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+
+/* inicio */
+.home{flex:1;overflow-y:auto;padding:16px 16px 40px}
+.top{display:flex;gap:10px;justify-content:flex-end;margin-bottom:8px}
+.chip-s{background:var(--card);border:2px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:900}
+h1{font-size:1.7rem;line-height:1.15;margin:6px 0 6px;font-weight:900}
+.sub{margin:0 0 22px;color:var(--mut);font-weight:700}
+.path{display:flex;flex-direction:column;align-items:center;gap:18px;padding:6px 0 16px}
+.node{display:flex;flex-direction:column;align-items:center;gap:8px;width:190px;text-align:center}
+.orb{width:84px;height:84px;border-radius:50%;border:0;font-size:2rem;cursor:pointer;background:var(--c);color:#fff;box-shadow:0 7px 0 color-mix(in srgb,var(--c) 60%,#000);position:relative;transition:transform .08s,box-shadow .08s}
+.orb:active{transform:translateY(5px);box-shadow:0 2px 0 color-mix(in srgb,var(--c) 60%,#000)}
+.orb .tick{position:absolute;right:-4px;top:-4px;width:28px;height:28px;border-radius:50%;background:#FFC21A;color:#5B3A00;font-size:.9rem;display:grid;place-items:center;font-weight:900;border:3px solid var(--bg)}
+.nl{font-weight:900;font-size:.98rem}
+.stars{display:block;color:#F2A900;letter-spacing:2px;font-size:.95rem}
+.stars.off{color:var(--line)}
+.link{display:block;margin:24px auto 0;background:none;border:0;color:var(--mut);text-decoration:underline;cursor:pointer;font-weight:700}
+
+/* lección */
+.lesson{display:flex;flex-direction:column;height:100%}
+.lh{display:flex;align-items:center;gap:14px;padding:14px 16px}
+.x{background:none;border:0;font-size:1.4rem;color:var(--mut);cursor:pointer;padding:4px 8px;border-radius:8px}
+.bar{flex:1;height:16px;background:var(--line);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--brand);border-radius:999px;transition:width .35s ease;position:relative}
+.bar i::after{content:"";position:absolute;left:8px;right:8px;top:4px;height:4px;border-radius:4px;background:rgba(255,255,255,.35)}
+.hearts{font-weight:900;color:#E5484D;min-width:48px;text-align:right}
+#qb{flex:1;overflow-y:auto;padding:8px 16px 24px}
+h2{font-size:1.4rem;line-height:1.25;margin:10px 0 20px;font-weight:900}
+
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:14px;margin-bottom:10px;background:var(--card);border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;cursor:pointer;font-weight:700;font-size:1rem}
+.opt .k{flex:none;width:28px;height:28px;border:2px solid var(--line);border-radius:8px;display:grid;place-items:center;font-size:.85rem;color:var(--mut);font-weight:900}
+.opt.sel{border-color:var(--sel);background:var(--sel-bg)}
+.opt.sel .k{border-color:var(--sel);color:var(--sel)}
+.opt.good{border-color:var(--good);background:var(--good-bg)}
+.opt.good .k{border-color:var(--good);color:var(--good)}
+.opt.bad{border-color:var(--bad);background:var(--bad-bg)}
+.opt.bad .k{border-color:var(--bad);color:var(--bad)}
+
+.slots{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:8px}
+.slot{min-height:52px;border-radius:14px;border:2px dashed var(--line);display:flex;align-items:center;gap:10px;padding:4px 8px}
+.slot .n{flex:none;width:24px;text-align:center;color:var(--mut);font-weight:900}
+.bank{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding-top:12px;border-top:2px solid var(--line)}
+.chip{background:var(--card);border:2px solid var(--line);border-bottom-width:4px;border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:800;font-size:.95rem;text-align:left}
+.slot .chip{flex:1}
+.chip.good{border-color:var(--good);background:var(--good-bg)}
+.chip.bad{border-color:var(--bad);background:var(--bad-bg)}
+
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mg>div{display:flex;flex-direction:column;gap:10px}
+.m{background:var(--card);border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;padding:12px 10px;cursor:pointer;font-weight:800;font-size:.9rem;text-align:left;min-height:64px}
+.m.sel{border-color:var(--sel);background:var(--sel-bg)}
+.m.done{border-color:var(--good);background:var(--good-bg);color:var(--good);cursor:default}
+.m.flash{border-color:var(--bad);background:var(--bad-bg);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.numw{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;background:var(--card);padding:6px 14px}
+.numw span{font-size:1.6rem;color:var(--mut);font-weight:900}
+.numw input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:1.7rem;font-weight:900;padding:8px 0;outline:none}
+.numw:focus-within{border-color:var(--sel)}
+.hint{color:var(--mut);margin-top:12px;font-size:.92rem}
+
+/* pie */
+#ft{padding:14px 16px 18px;border-top:2px solid var(--line);transition:background .2s}
+#ft.good{background:var(--good-bg);border-top-color:transparent}
+#ft.bad{background:var(--bad-bg);border-top-color:transparent}
+#fb{margin-bottom:12px}
+#fb:empty{display:none}
+.fbt{font-size:1.2rem;font-weight:900}
+#ft.good .fbt{color:var(--good)}
+#ft.bad .fbt{color:var(--bad)}
+.fbm{margin-top:4px;font-size:.95rem;font-weight:700}
+#ft.good .fbm{color:var(--good)}
+#ft.bad .fbm{color:var(--bad)}
+
+/* resultados */
+.end{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:14px}
+.big{font-size:4.5rem;line-height:1}
+.end h2{margin:0;font-size:1.8rem}
+.end p{margin:0;color:var(--mut)}
+.stats{display:flex;gap:10px;margin:10px 0 6px;flex-wrap:wrap;justify-content:center}
+.stat{min-width:100px;border:2px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden}
+.stat b{display:block;padding:4px 8px;font-size:.72rem;color:#fff;background:var(--c)}
+.stat span{display:block;padding:10px 8px;font-size:1.3rem;font-weight:900}
+.end .btns{width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px;margin-top:10px}
+.stars.big2{font-size:2.4rem;letter-spacing:6px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ============ BANCO DE PREGUNTAS ============ */
+const TF=["Verdadero","Falso"];
+const LESSONS=[
+{id:"c1",name:"Conceptos base",icon:"🧩",qs:[
+ {t:"mc",q:"Un hacker, un malware o un error humano son ejemplos de…",o:["Amenaza","Vulnerabilidad","Activo","Riesgo residual"],a:0,e:"Una amenaza es cualquier cosa que pueda causar daño."},
+ {t:"mc",q:"Un software sin parches de seguridad es un ejemplo de…",o:["Amenaza","Vulnerabilidad","Activo","Control"],a:1,e:"Una vulnerabilidad es una debilidad que puede ser explotada."},
+ {t:"mc",q:"¿Cuál es la definición de riesgo?",o:["Probabilidad de que una amenaza explote una vulnerabilidad y genere impacto","Todo recurso valioso para la organización","El nivel de riesgo que queda tras aplicar controles","Cualquier debilidad de un sistema"],a:0,e:"Riesgo = probabilidad de que una amenaza explote una vulnerabilidad y genere un impacto."},
+ {t:"match",q:"Relaciona cada concepto con su definición",pairs:[["Activo","Recurso valioso: información, sistemas, personas"],["Amenaza","Cualquier cosa que pueda causar daño"],["Vulnerabilidad","Debilidad que puede ser explotada"],["Riesgo residual","Riesgo que permanece tras aplicar controles"]],e:"Son los cinco conceptos base: activo, amenaza, vulnerabilidad, riesgo y riesgo residual."},
+ {t:"mc",q:"Una amenaza sin ninguna vulnerabilidad que explotar genera riesgo.",o:TF,a:1,ns:true,e:"El riesgo existe cuando una amenaza y una vulnerabilidad coinciden sobre un activo con valor."},
+ {t:"mc",q:"¿Cuál de estos NO es un activo?",o:["Base de datos de clientes","Empleados clave","Un ataque de ransomware","Servidor de la empresa"],a:2,e:"El ransomware es una amenaza, no un activo."},
+ {t:"mc",q:"De forma simple, el riesgo se calcula como…",o:["Probabilidad × Impacto","Activo + Amenaza","Impacto − Control","Vulnerabilidad ÷ Activo"],a:0,e:"Riesgo = Probabilidad × Impacto (es la base de la matriz 5×5)."}
+]},
+{id:"p2",name:"Etapas del proceso",icon:"🔄",qs:[
+ {t:"order",q:"Ordena las 6 etapas de la metodología de gestión de riesgos",items:["Establecer contexto y alcance","Identificar riesgos","Analizar y evaluar riesgos","Planificar y tratar riesgos","Monitorear y revisar","Comunicar y reportar"],e:"Contexto → Identificar → Analizar/evaluar → Tratar → Monitorear → Comunicar."},
+ {t:"mc",q:"¿Qué se define en la etapa de establecer el contexto y alcance?",o:["Activos, perímetro y contexto de la empresa","Las multas aplicables","Solo los controles técnicos","El presupuesto de seguros"],a:0,e:"Se define qué se va a proteger y bajo qué condiciones."},
+ {t:"mc",q:"Identificar riesgos consiste en…",o:["Determinar y comprender eventos potenciales que pueden impactar","Calcular el ALE","Contratar un seguro","Redactar el informe final"],a:0,e:"Es detectar qué puede salir mal, cómo y por qué."},
+ {t:"mc",q:"¿Para qué sirve la etapa de monitorear y revisar?",o:["Supervisar de forma continua riesgos y controles para que sigan vigentes","Eliminar todos los riesgos","Decidir el alcance inicial","Asignar el presupuesto anual"],a:0,e:"El entorno cambia, así que riesgos y controles deben mantenerse actualizados y relevantes."},
+ {t:"mc",q:"En la etapa de comunicación se mantiene informadas a…",o:["Las partes interesadas","Solo a los atacantes","Solo al área de TI","Únicamente a los auditores externos"],a:0,e:"Se informa a las partes interesadas sobre los riesgos y su gestión (reporte de prevención)."},
+ {t:"mc",q:"¿Cuál NO es un beneficio de gestionar riesgos?",o:["Priorizar riesgos críticos","Justificar presupuesto","Cumplir con normativas","Eliminar el riesgo al 100 %"],a:3,e:"Siempre queda un riesgo residual; la gestión lo reduce, no lo borra."},
+ {t:"order",q:"Ordena el ciclo en su versión de 5 pasos",items:["Identificación de activos","Analizar amenazas y vulnerabilidades","Evaluar impacto y probabilidad","Tratamiento del riesgo","Monitoreo y revisión"],e:"Activos → amenazas/vulnerabilidades → impacto/probabilidad → tratamiento → monitoreo."},
+ {t:"mc",q:"La gestión de riesgos se realiza una sola vez al inicio del proyecto.",o:TF,a:1,ns:true,e:"Es un ciclo continuo: se retroalimenta con el monitoreo y la comunicación."}
+]},
+{id:"a3",name:"Cualitativo vs. cuantitativo",icon:"⚖️",qs:[
+ {t:"mc",q:"La afectación de la reputación es una variable…",o:["Cualitativa","Cuantitativa"],a:0,ns:true,e:"Es abstracta y subjetiva, difícil de medir con precisión."},
+ {t:"mc",q:"El tiempo fuera de servicio es una variable…",o:["Cualitativa","Cuantitativa"],a:1,ns:true,e:"Es tangible y medible (horas de downtime)."},
+ {t:"match",q:"Relaciona cada término con su característica",pairs:[["Cualitativo","Escalas como bajo/medio/alto; subjetivo"],["Cuantitativo","Valores monetarios; requiere datos precisos"],["Matriz de probabilidad e impacto","Herramienta cualitativa de priorización"],["FAIR","Marco cuantitativo: riesgo en dinero"]],e:"El cualitativo es rápido pero subjetivo; el cuantitativo es preciso pero exige datos."},
+ {t:"mc",q:"¿Qué análisis es ideal para justificar el costo de los controles?",o:["Cuantitativo","Cualitativo","Ninguno","Ambos son iguales"],a:0,e:"Al dar valores monetarios permite comparar el costo del control contra la pérdida evitada."},
+ {t:"mc",q:"La disminución del compromiso de los trabajadores es una variable…",o:["Cualitativa","Cuantitativa"],a:0,ns:true,e:"Es abstracta y subjetiva."},
+ {t:"mc",q:"La disminución en la tasa de altas de clientes es una variable…",o:["Cualitativa","Cuantitativa"],a:1,ns:true,e:"Se puede medir con precisión en cifras."},
+ {t:"mc",q:"¿Cuál es una desventaja del análisis cualitativo?",o:["Es subjetivo","Requiere datos históricos exactos","Es muy costoso","Solo sirve para riesgos financieros"],a:0,e:"Depende del criterio de quien evalúa y es difícil de comparar."}
+]},
+{id:"f4",name:"Fórmulas: SLE y ALE",icon:"🧮",qs:[
+ {t:"mc",q:"¿Cómo se calcula el SLE?",o:["Valor del activo × Factor de exposición","SLE × ARO","Probabilidad × Impacto","Valor del activo ÷ ARO"],a:0,e:"SLE = Valor del activo × Factor de exposición."},
+ {t:"mc",q:"¿Cómo se calcula el ALE?",o:["SLE × ARO","Valor del activo × FE","ARO ÷ SLE","SLE + ARO"],a:0,e:"ALE = SLE × ARO."},
+ {t:"mc",q:"¿Qué significa ARO?",o:["Tasa anual de ocurrencia","Riesgo operativo anual","Análisis de riesgo organizado","Activo con riesgo opcional"],a:0,e:"ARO (Annualized Rate of Occurrence): cuántas veces al año se espera el evento."},
+ {t:"num",q:"Un activo vale $100,000 y el factor de exposición es 50 %. ¿Cuánto es el SLE?",a:50000,e:"SLE = 100,000 × 0.50 = $50,000."},
+ {t:"num",q:"El SLE es $50,000 y el evento ocurre 2 veces al año (ARO = 2). ¿Cuánto es el ALE?",a:100000,e:"ALE = 50,000 × 2 = $100,000."},
+ {t:"num",q:"Activo de $200,000, factor de exposición 40 %, ocurre 1 vez cada 2 años (ARO = 0.5). ¿Cuánto es el ALE?",a:40000,e:"SLE = 200,000 × 0.40 = 80,000; ALE = 80,000 × 0.5 = $40,000."},
+ {t:"num",q:"Activo de $500,000, FE 20 %, ARO = 2. ¿Cuánto es el ALE?",a:200000,e:"SLE = 500,000 × 0.20 = 100,000; ALE = 100,000 × 2 = $200,000."},
+ {t:"mc",q:"El ALE actual es $40,000. Un control cuesta $15,000 al año y baja el ALE a $10,000. ¿Conviene?",o:["Sí, el ahorro neto es $15,000","No, cuesta más de lo que ahorra","Sí, el ahorro neto es $30,000","No se puede saber"],a:0,e:"Ahorro = 40,000 − 10,000 = 30,000. Menos el costo del control (15,000) = $15,000 a favor."},
+ {t:"mc",q:"ALE significa…",o:["Pérdida anual esperada","Activo de la empresa","Alerta de escalamiento","Análisis de límites"],a:0,e:"ALE = Annual Loss Expectancy, pérdida anual esperada."}
+]},
+{id:"t5",name:"Tratamiento del riesgo",icon:"🛡️",qs:[
+ {t:"mc",q:"No usar memorias USB desconocidas es una estrategia de…",o:["Evitar","Mitigar","Transferir","Aceptar"],a:0,e:"Evitar = eliminar la actividad que genera el riesgo."},
+ {t:"mc",q:"Instalar un antivirus es una estrategia de…",o:["Evitar","Mitigar","Transferir","Aceptar"],a:1,e:"Mitigar = reducir la probabilidad o el impacto."},
+ {t:"mc",q:"Contratar un seguro es una estrategia de…",o:["Evitar","Mitigar","Transferir","Aceptar"],a:2,e:"Transferir = pasar el riesgo a un tercero."},
+ {t:"mc",q:"¿Cuándo tiene sentido aceptar un riesgo?",o:["Cuando es bajo o el costo de mitigarlo es muy alto","Cuando es crítico","Cuando nadie lo conoce","Cuando hay presupuesto de sobra"],a:0,e:"Se asume de forma consciente porque no vale la pena tratarlo."},
+ {t:"match",q:"Relaciona cada estrategia con su significado",pairs:[["Evitar","Eliminar la actividad de riesgo"],["Mitigar","Reducir probabilidad o impacto"],["Transferir","Pasar el riesgo a un tercero"],["Aceptar","Asumir el riesgo conscientemente"]],e:"Las cuatro estrategias de tratamiento: evitar, mitigar, transferir y aceptar."},
+ {t:"mc",q:"Transferir un riesgo lo elimina por completo.",o:TF,a:1,ns:true,e:"Solo cambia quién absorbe la pérdida económica; el riesgo sigue existiendo."},
+ {t:"mc",q:"Un plan de recuperación con respaldos reduce principalmente…",o:["El impacto","La probabilidad","El activo","La amenaza"],a:0,e:"Actúa después del evento: reduce el daño. Es la estrategia de reducir impacto."},
+ {t:"mc",q:"Un control de capacitación anti-phishing reduce principalmente…",o:["La probabilidad","El impacto","El valor del activo","El ARO a cero"],a:0,e:"Es preventivo: hace que el evento ocurra menos."}
+]},
+{id:"k6",name:"Tipos de controles",icon:"🔒",qs:[
+ {t:"match",q:"Relaciona cada control por naturaleza con su ejemplo",pairs:[["Administrativos","Políticas, capacitación y procedimientos"],["Técnicos","Firewall, antivirus y cifrado"],["Físicos","Cerraduras, cámaras y guardias"]],e:"Por naturaleza: administrativos, técnicos y físicos."},
+ {t:"match",q:"Relaciona cada control por función con su objetivo",pairs:[["Preventivos","Evitan que el evento ocurra"],["Detectivos","Identifican que el evento ocurre u ocurrió"],["Correctivos","Reducen el daño y restauran"],["Disuasorios","Desalientan a un posible atacante"]],e:"Por función: preventivos, detectivos, correctivos y disuasorios."},
+ {t:"mc",q:"Un firewall es un control…",o:["Técnico y preventivo","Físico y correctivo","Administrativo y detectivo","Disuasorio y físico"],a:0,e:"Es tecnología que bloquea el tráfico no autorizado antes de que cause daño."},
+ {t:"mc",q:"Los respaldos y el plan de recuperación son controles…",o:["Correctivos","Preventivos","Disuasorios","Detectivos"],a:0,e:"Actúan después del evento para restaurar. Son los controles de recuperación."},
+ {t:"mc",q:"Un SIEM o una alarma son controles…",o:["Detectivos","Preventivos","Correctivos","Disuasorios"],a:0,e:"Detectan que algo está pasando o ya pasó."},
+ {t:"mc",q:"La capacitación anti-phishing es un control…",o:["Administrativo y preventivo","Técnico y correctivo","Físico y detectivo","Técnico y disuasorio"],a:0,e:"Es una medida sobre las personas que previene incidentes."},
+ {t:"mc",q:"Un letrero de “Zona vigilada” es un control…",o:["Disuasorio","Correctivo","Detectivo","Técnico"],a:0,e:"Su fin es desalentar a quien piense en atacar."}
+]},
+{id:"m7",name:"Marcos y metodologías",icon:"🏛️",qs:[
+ {t:"match",q:"Relaciona cada marco con su descripción",pairs:[["ISO 31000","Directrices generales de gestión de riesgos"],["COSO","Integra riesgo y control interno"],["MAGERIT","Metodología española para sistemas de información"],["FAIR","Cuantifica el riesgo cibernético en dinero"]],e:"Cada marco tiene su enfoque, origen y tipo de análisis."},
+ {t:"mc",q:"OCTAVE se centra en…",o:["Alinear la seguridad con los objetivos del negocio","Calcular solo el ALE","Auditar estados financieros","Normar la seguridad física"],a:0,e:"Identifica amenazas, prioriza activos y analiza vulnerabilidades, siempre ligado al negocio."},
+ {t:"mc",q:"NIST SP 800-30 es una guía publicada por…",o:["El instituto NIST de EE. UU.","La ISO en Suiza","El gobierno de España","El comité COSO"],a:0,e:"NIST SP 800-30 es la guía para evaluar riesgos de seguridad de la información."},
+ {t:"mc",q:"¿Cuál NO es un componente del marco COSO?",o:["Ambiente de control","Evaluación de riesgos","Monitoreo","Diagrama Bow-Tie"],a:3,e:"El Bow-Tie es una herramienta visual, no un componente de COSO."},
+ {t:"mc",q:"FAIR desglosa el riesgo en análisis de…",o:["Frecuencia y magnitud","Activos y pasivos","Físicos y lógicos","Amenazas y controles"],a:0,e:"Frecuencia de eventos de pérdida y magnitud de la pérdida."},
+ {t:"mc",q:"¿Qué metodología fue desarrollada en España?",o:["MAGERIT","OCTAVE","FAIR","COSO"],a:0,e:"MAGERIT = España + sistemas de información."},
+ {t:"order",q:"Ordena los 5 componentes de COSO",items:["Ambiente de control","Evaluación de riesgos","Actividades de control","Información y comunicación","Monitoreo"],e:"Ambiente → evaluación → actividades → información y comunicación → monitoreo."},
+ {t:"mc",q:"OCTAVE significa…",o:["Evaluación de Amenazas, Activos y Vulnerabilidades Operacionalmente Críticas","Organización de Control de Tecnología y Vigilancia","Operación Central de Tratamiento de Activos","Observatorio de Control de Amenazas Virtuales"],a:0,e:"Operationally Critical Threat, Asset, and Vulnerability Evaluation."},
+ {t:"mc",q:"ISO 31000 se puede aplicar a…",o:["Cualquier organización y tipo de riesgo","Solo a bancos","Solo a proyectos de software","Solo a la administración pública"],a:0,e:"Es una norma de directrices generales, no exclusiva de TI."}
+]},
+{id:"v8",name:"Matriz y Bow-Tie",icon:"🎯",qs:[
+ {t:"num",q:"En una matriz 5×5, un riesgo con probabilidad 4 e impacto 5 tiene nivel…",a:20,cur:false,e:"4 × 5 = 20, zona crítica (roja)."},
+ {t:"mc",q:"¿Qué muestra un diagrama Bow-Tie?",o:["Amenazas, evento central, consecuencias y controles","Solo el costo de los controles","Solo la matriz de probabilidad","El organigrama de seguridad"],a:0,e:"Todo en un solo golpe de vista, con forma de corbatín."},
+ {t:"mc",q:"El lado izquierdo del Bow-Tie representa…",o:["Prevención","Recuperación","Aceptación","Auditoría"],a:0,e:"Izquierda: amenazas y controles preventivos."},
+ {t:"mc",q:"El lado derecho del Bow-Tie representa…",o:["Recuperación y mitigación de consecuencias","Prevención","Identificación de activos","Presupuesto"],a:0,e:"Derecha: consecuencias y controles correctivos o de recuperación."},
+ {t:"mc",q:"¿Qué va en el centro (nudo) del Bow-Tie?",o:["El evento central (riesgo materializado)","El control más caro","El activo","El responsable del riesgo"],a:0,e:"Es el momento en que se pierde el control."},
+ {t:"num",q:"Tras aplicar controles, el riesgo pasa a probabilidad 2 e impacto 3. ¿Cuál es el nivel residual?",a:6,cur:false,e:"2 × 3 = 6, zona media (amarilla)."},
+ {t:"mc",q:"La actividad pide proponer…",o:["2 controles preventivos y 1 de recuperación","1 preventivo y 2 de recuperación","3 controles detectivos","2 disuasorios y 1 preventivo"],a:0,e:"Dos preventivos reducen la probabilidad; uno de recuperación reduce el impacto."},
+ {t:"order",q:"Ordena el Bow-Tie de izquierda a derecha",items:["Amenazas","Controles preventivos","Evento central","Controles de recuperación","Consecuencias"],e:"Amenazas → preventivos → evento → recuperación → consecuencias."}
+]}
+];
+const ALL=LESSONS.flatMap(l=>l.qs);
+LESSONS.push({id:"fin",name:"Reto final",icon:"🏆",final:true});
+const COLORS=["#1F9D6B","#4FAE4A","#8EB52A","#DDAE1C","#F28C28","#E5603A","#D9423E","#6E56CF"];
+const OFFS=[0,44,66,44,0,-44,-66,-44,0];
+const PRAISE=["¡Correcto!","¡Excelente!","¡Muy bien!","¡Eso es!","¡Perfecto!"];
+
+/* ============ UTILIDADES Y ALMACENAMIENTO ============ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let store={done:{},xp:0,streak:0,last:""};
+try{const r=localStorage.getItem("gr-quiz-v1");if(r)store=Object.assign(store,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem("gr-quiz-v1",JSON.stringify(store))}catch(e){}};
+let S={};
+
+/* ============ INICIO ============ */
+function home(){
+  const nodes=LESSONS.map((L,i)=>{
+    const st=store.done[L.id]||0;
+    const col=L.final?"#1F2A44":COLORS[i];
+    const stars=st?`<span class="stars">${"★".repeat(st)}${"☆".repeat(3-st)}</span>`:`<span class="stars off">☆☆☆</span>`;
+    return `<div class="node" style="transform:translateX(${OFFS[i]}px)">
+      <button class="orb" style="--c:${col}" data-i="${i}" aria-label="${esc(L.name)}">${L.icon}${st?'<span class="tick">✓</span>':''}</button>
+      <div class="nl">${esc(L.name)}${stars}</div></div>`;
+  }).join("");
+  $("#app").innerHTML=`<div class="home">
+    <div class="top"><div class="chip-s">🔥 ${store.streak}</div><div class="chip-s">⚡ ${store.xp} XP</div></div>
+    <h1>Repaso de gestión de riesgos</h1>
+    <p class="sub">Toca una lección. Tienes 5 vidas por lección; las preguntas que falles volverán al final.</p>
+    <div class="path">${nodes}</div>
+    <button class="link" id="reset">Borrar progreso</button></div>`;
+  document.querySelectorAll(".orb").forEach(b=>b.onclick=()=>start(+b.dataset.i));
+  let armed=false;
+  $("#reset").onclick=e=>{
+    if(!armed){armed=true;e.target.textContent="¿Seguro? Toca de nuevo para borrar";return}
+    store={done:{},xp:0,streak:0,last:""};save();home();
+  };
+}
+
+/* ============ LECCIÓN ============ */
+function start(i){
+  const L=LESSONS[i];
+  const qs=L.final?shuffle(ALL).slice(0,12):L.qs;
+  S={i,total:qs.length,queue:shuffle(qs),hearts:5,ok:0,wrong:0,xp:0};
+  next();
+}
+function next(){
+  if(S.hearts<=0)return fail();
+  if(!S.queue.length)return finish();
+  S.q=S.queue.shift();S.checked=false;S.ready=false;
+  $("#app").innerHTML=`<div class="lesson">
+    <header class="lh"><button class="x" id="quit" aria-label="Salir de la lección">✕</button>
+    <div class="bar"><i style="width:${S.ok/S.total*100}%"></i></div>
+    <div class="hearts" id="hr">❤️ ${S.hearts}</div></header>
+    <main id="qb"></main>
+    <footer id="ft"><div id="fb"></div><button class="btn wide" id="cta" disabled>Comprobar</button></footer></div>`;
+  $("#quit").onclick=home;
+  $("#cta").onclick=onCta;
+  ({mc:bMC,order:bOrder,match:bMatch,num:bNum})[S.q.t](S.q);
+}
+function setReady(v){S.ready=v;const c=$("#cta");if(c&&!S.checked)c.disabled=!v}
+function onCta(){
+  if(!S.checked){
+    const r=S.check();S.checked=true;
+    if(r.ok){S.ok++;S.xp+=10}else{S.wrong++;S.hearts--;S.queue.push(S.q)}
+    showFb(r);
+  }else next();
+}
+function showFb(r){
+  const ft=$("#ft");ft.className=r.ok?"good":"bad";
+  const head=r.ok?PRAISE[Math.floor(Math.random()*PRAISE.length)]:"Respuesta correcta";
+  const ans=(!r.ok&&r.right)?`<div>${esc(r.right)}</div>`:"";
+  $("#fb").innerHTML=`<div class="fbt">${head}</div><div class="fbm">${ans}${esc(S.q.e||"")}</div>`;
+  const c=$("#cta");c.disabled=false;c.className="btn wide"+(r.ok?"":" bad");
+  c.textContent=(!r.ok&&S.hearts<=0)?"Ver resultado":"Continuar";
+  $("#hr").textContent="❤️ "+Math.max(S.hearts,0);
+  document.querySelector(".bar i").style.width=(S.ok/S.total*100)+"%";
+  c.focus();
+}
+
+/* --- opción múltiple --- */
+function bMC(q){
+  const opts=q.o.map((t,i)=>({t,c:i===q.a}));
+  const list=q.ns?opts:shuffle(opts);S.sel=-1;
+  $("#qb").innerHTML=`<h2>${esc(q.q)}</h2>`+list.map((o,i)=>`<button class="opt" data-i="${i}"><span class="k">${i+1}</span><span>${esc(o.t)}</span></button>`).join("");
+  const els=document.querySelectorAll(".opt");
+  els.forEach(b=>b.onclick=()=>{
+    if(S.checked)return;S.sel=+b.dataset.i;
+    els.forEach(x=>x.classList.toggle("sel",x===b));setReady(true);
+  });
+  S.check=()=>{
+    const ok=list[S.sel].c;
+    els.forEach((el,i)=>{el.classList.remove("sel");if(list[i].c)el.classList.add("good");else if(i===S.sel)el.classList.add("bad")});
+    return {ok,right:q.o[q.a]};
+  };
+}
+
+/* --- ordenar --- */
+function bOrder(q){
+  let bank=shuffle(q.items);
+  if(bank.join()===q.items.join())bank=bank.reverse();
+  S.bank=bank;S.ans=[];drawOrder(q);
+  S.check=()=>{
+    const ok=S.ans.every((t,i)=>t===q.items[i]);
+    drawOrder(q,true);
+    return {ok,right:ok?"":q.items.map((t,i)=>(i+1)+". "+t).join("  ")};
+  };
+}
+function drawOrder(q,lock){
+  const n=q.items.length;
+  const slots=Array.from({length:n},(_,i)=>{
+    const t=S.ans[i];
+    const cls=lock?(t===q.items[i]?" good":" bad"):"";
+    return `<li class="slot"><span class="n">${i+1}</span>${t?`<button class="chip${cls}" data-a="${i}">${esc(t)}</button>`:""}</li>`;
+  }).join("");
+  $("#qb").innerHTML=`<h2>${esc(q.q)}</h2><ol class="slots">${slots}</ol><div class="bank">${S.bank.map((t,i)=>`<button class="chip" data-b="${i}">${esc(t)}</button>`).join("")}</div>`;
+  if(lock)return;
+  document.querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>{S.ans.push(S.bank.splice(+b.dataset.b,1)[0]);drawOrder(q);setReady(S.bank.length===0)});
+  document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
+    const idx=+b.dataset.a;S.bank.push(...S.ans.splice(idx));drawOrder(q);setReady(false);
+  });
+  setReady(S.bank.length===0);
+}
+
+/* --- relacionar --- */
+function bMatch(q){
+  const L=shuffle(q.pairs.map(p=>p[0])),R=shuffle(q.pairs.map(p=>p[1]));
+  S.mm=0;S.matched=0;S.sl=null;S.sr=null;
+  const col=(arr,s)=>`<div>${arr.map(t=>`<button class="m" data-s="${s}" data-t="${esc(t)}">${esc(t)}</button>`).join("")}</div>`;
+  $("#qb").innerHTML=`<h2>${esc(q.q)}</h2><div class="mg">${col(L,"l")}${col(R,"r")}</div>`;
+  const btns=[...document.querySelectorAll(".m")];
+  btns.forEach(b=>b.onclick=()=>{
+    if(b.classList.contains("done")||S.checked)return;
+    const side=b.dataset.s;
+    btns.filter(x=>x.dataset.s===side&&!x.classList.contains("done")).forEach(x=>x.classList.remove("sel"));
+    b.classList.add("sel");S["s"+side]=b;
+    if(S.sl&&S.sr){
+      const l=S.sl,r=S.sr;S.sl=S.sr=null;
+      const good=q.pairs.some(p=>p[0]===l.dataset.t&&p[1]===r.dataset.t);
+      if(good){
+        [l,r].forEach(x=>{x.classList.remove("sel");x.classList.add("done")});
+        S.matched++;if(S.matched===q.pairs.length)setReady(true);
+      }else{
+        S.mm++;[l,r].forEach(x=>{x.classList.remove("sel");x.classList.add("flash")});
+        setTimeout(()=>[l,r].forEach(x=>x.classList.remove("flash")),450);
+      }
+    }
+  });
+  S.check=()=>({ok:S.mm===0,right:""});
+}
+
+/* --- numérico --- */
+function bNum(q){
+  const cur=q.cur!==false;
+  $("#qb").innerHTML=`<h2>${esc(q.q)}</h2><div class="numw">${cur?"<span>$</span>":""}<input id="ni" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Tu respuesta"></div><p class="hint">Escribe solo el número, sin letras.</p>`;
+  const inp=$("#ni");inp.focus();
+  inp.oninput=()=>setReady(inp.value.trim()!=="");
+  S.check=()=>{
+    const n=parseFloat(inp.value.replace(/[$,\s]/g,""));
+    const ok=Math.abs(n-q.a)<0.01;inp.disabled=true;
+    return {ok,right:(cur?"$":"")+q.a.toLocaleString("en-US")};
+  };
+}
+
+/* teclado: Enter y números */
+document.addEventListener("keydown",e=>{
+  const c=$("#cta");if(!c)return;
+  if(e.key==="Enter"&&!c.disabled){e.preventDefault();c.click();return}
+  if(/^[1-9]$/.test(e.key)&&S.q&&S.q.t==="mc"&&!S.checked&&e.target.tagName!=="INPUT"){
+    const el=document.querySelectorAll(".opt")[+e.key-1];if(el)el.click();
+  }
+});
+
+/* ============ RESULTADOS ============ */
+function finish(){
+  S.xp+=5;store.xp+=S.xp;
+  const stars=S.wrong===0?3:S.wrong<=2?2:1;
+  const id=LESSONS[S.i].id;
+  store.done[id]=Math.max(store.done[id]||0,stars);
+  const today=new Date().toDateString();
+  if(store.last!==today){
+    const y=new Date();y.setDate(y.getDate()-1);
+    store.streak=(store.last===y.toDateString())?store.streak+1:1;
+    store.last=today;
+  }
+  save();
+  const acc=Math.round(S.ok/(S.ok+S.wrong)*100);
+  const msg=stars===3?"¡Sin errores!":stars===2?"Casi perfecto":"Buen intento, repasa y mejora";
+  $("#app").innerHTML=`<div class="end">
+    <div class="big">${stars===3?"🏆":"🎉"}</div>
+    <h2>¡Lección completada!</h2>
+    <span class="stars big2">${"★".repeat(stars)}${"☆".repeat(3-stars)}</span>
+    <p>${msg}</p>
+    <div class="stats">
+      <div class="stat" style="--c:#F2A900"><b>XP GANADO</b><span>${S.xp}</span></div>
+      <div class="stat" style="--c:#1F9D6B"><b>PRECISIÓN</b><span>${acc}%</span></div>
+      <div class="stat" style="--c:#E5484D"><b>VIDAS</b><span>${S.hearts}</span></div>
+    </div>
+    <div class="btns"><button class="btn wide" id="go">Continuar</button><button class="btn ghost wide" id="again">Repetir lección</button></div></div>`;
+  $("#go").onclick=home;$("#again").onclick=()=>start(S.i);$("#go").focus();
+}
+function fail(){
+  $("#app").innerHTML=`<div class="end">
+    <div class="big">💔</div><h2>Te quedaste sin vidas</h2>
+    <p>Repasa esa parte de la guía y vuelve a intentarlo. Acertaste ${S.ok} de ${S.total}.</p>
+    <div class="btns"><button class="btn wide" id="retry">Reintentar</button><button class="btn ghost wide" id="back">Volver al inicio</button></div></div>`;
+  $("#retry").onclick=()=>start(S.i);$("#back").onclick=home;$("#retry").focus();
+}
+
+home();
+</script>
+</body>
+</html>
